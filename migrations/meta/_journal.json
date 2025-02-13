@@ -8,6 +8,13 @@
       "when": 1739430254119,
       "tag": "0000_narrow_black_tarantula",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1739441174062,
+      "tag": "0001_loose_jimmy_woo",
+      "breakpoints": true
     }
   ]
 }
