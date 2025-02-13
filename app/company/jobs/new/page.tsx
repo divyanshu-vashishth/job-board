@@ -95,11 +95,11 @@ export default function PostJob() {
         </div>
         <div className="mb-4">
           <Label htmlFor="salary_min">Salary Min</Label>
-          <Input id="salary_min" name="salary_min" value={formData.salary_min} onChange={handleChange} required />
+          <Input type="number" min={10000} id="salary_min" name="salary_min" value={formData.salary_min} onChange={handleChange} required />
         </div>
         <div className="mb-4">
           <Label htmlFor="salary_max">Salary Max</Label>
-          <Input id="salary_max" name="salary_max" value={formData.salary_max} onChange={handleChange} required />
+          <Input type="number" min={20000} id="salary_max" name="salary_max" value={formData.salary_max} onChange={handleChange} required />
         </div>
         <Button type="submit">Post Job</Button>
       </form>

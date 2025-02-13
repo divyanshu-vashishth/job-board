@@ -1,5 +1,8 @@
+import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { getApplicationsForJob } from "@/lib/actions"
+import { ArrowLeftIcon } from "lucide-react"
+import Link from "next/link"
 
 type Params = Promise<{
   id: string
@@ -11,7 +14,12 @@ export default async function JobApplications({ params }: { params: Params }) {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Applications for Job ID: {params_id.id}</h1>
+      <Button>
+      <ArrowLeftIcon className="h-5 w-5 ml-2" />
+
+        <Link href={`/company/jobs`}>Back to Job Details</Link>
+      </Button>
+      {/* <h1 className="text-3xl font-bold mb-6">Applications for Job ID: {params_id.id}</h1> */}
       <Table>
         <TableHeader>
           <TableRow>
