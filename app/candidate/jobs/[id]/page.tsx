@@ -5,7 +5,7 @@ type Params = Promise<{ id: string }>
 export default async function JobDetails({ params }: { params: Params }) {
   const params_id = await params
 
-  
+
   const job = await getJobById(parseInt(params_id.id))
 
   if (!job) {
@@ -28,6 +28,11 @@ export default async function JobDetails({ params }: { params: Params }) {
         <p className="mb-2">
           <strong>Positions:</strong> {job.positions}
         </p>
+        {job.salary_min !== null && job.salary_max !== null && (
+          <p className="mb-2">
+            Salary: ${job.salary_min} - ${job.salary_max}
+          </p>
+        )}
         <h2 className="text-2xl font-semibold mb-2">Job Description</h2>
         <p className="mb-4">{job.description}</p>
         <Button asChild>

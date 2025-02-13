@@ -16,8 +16,11 @@ export const jobs = pgTable('jobs', {
   location: varchar('location', { length: 255 }).notNull(),
   category: categoryEnum(),
   positions: integer('positions').notNull().default(1),
+  salary_min: integer('salary_min'),
+  salary_max: integer('salary_max'),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
+  
 });
 
 export const applications = pgTable('applications', {

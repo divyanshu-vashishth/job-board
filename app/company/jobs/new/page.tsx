@@ -19,6 +19,8 @@ export default function PostJob() {
     location: "",
     positions: 1,
     company: "",
+    salary_min: 0,
+    salary_max: 0,
   })
   const router = useRouter()
   const handleSubmit = async (e: React.FormEvent) => {
@@ -88,8 +90,16 @@ export default function PostJob() {
           </Select>
         </div>
         <div className="mb-4">
-          <Label htmlFor="location">Location</Label>
+          <Label htmlFor="country">Country</Label>
           <Input id="location" name="location" value={formData.location} onChange={handleChange} required />
+        </div>
+        <div className="mb-4">
+          <Label htmlFor="salary_min">Salary Min</Label>
+          <Input id="salary_min" name="salary_min" value={formData.salary_min} onChange={handleChange} required />
+        </div>
+        <div className="mb-4">
+          <Label htmlFor="salary_max">Salary Max</Label>
+          <Input id="salary_max" name="salary_max" value={formData.salary_max} onChange={handleChange} required />
         </div>
         <Button type="submit">Post Job</Button>
       </form>

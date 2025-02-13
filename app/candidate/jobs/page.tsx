@@ -12,34 +12,42 @@ export default function CandidateJobs() {
   const [jobs, setJobs] = useState<Job[]>([])
   const [search, setSearch] = useState("")
   const [category, setCategory] = useState<string | null>("")
-  const [allJobs, setAllJobs] = useState<Job[]>([]); // Store all jobs
-
+  const [allJobs, setAllJobs] = useState<Job[]>([]);
+  const [salaryRange, setSalaryRange] = useState<string | null>("");
+  const [locationFilter, setLocationFilter] = useState<string | null>("");
   const fetchJobs = async () => {
     const response = await fetch('/api/jobs', { cache: 'no-store' });
-  
+
     if (!response.ok) {
       throw new Error('Failed to fetch jobs')
-    } 
+    }
     const results = await response.json()
-    setAllJobs(results.jobs); 
+    setAllJobs(results.jobs);
   }
 
   useEffect(() => {
     fetchJobs()
-  }, []) 
+  }, [])
 
   useEffect(() => {
-    
     const filteredJobs = allJobs.filter(job => {
       const searchMatch =
         job.title.toLowerCase().includes(search.toLowerCase()) ||
         job.company.toLowerCase().includes(search.toLowerCase()) ||
         job.description.toLowerCase().includes(search.toLowerCase());
-      const categoryMatch = category ? job.category === category : true; 
-      return searchMatch && categoryMatch;
+      const categoryMatch = category ? job.category === category : true;
+      // {{ Add salary range filter logic }}
+      const salaryMatch = salaryRange ?
+        (salaryRange === "50k-" && (job.salary_min !== null && job.salary_min <= 50000)) ||
+        (salaryRange === "50k-100k" && (job.salary_min !== null && job.salary_min >= 50000 && job.salary_max !== null && job.salary_max <= 100000)) ||
+        (salaryRange === "100k+" && (job.salary_max !== null && job.salary_max >= 100000))
+        : true;
+      // {{ Add location filter logic }}
+      const locationMatch = locationFilter ? job.location === locationFilter : true;
+      return searchMatch && categoryMatch && salaryMatch && locationMatch;
     });
     setJobs(filteredJobs);
-  }, [search, category, allJobs]); 
+  }, [search, category, allJobs, salaryRange, locationFilter]);
   return (
     <div className="container mx-auto p-4">
       <div className="mb-6 space-y-4">
@@ -64,6 +72,32 @@ export default function CandidateJobs() {
               ))}
             </SelectContent>
           </Select>
+          {/* Add Salary Range Filter  */}
+          <Select onValueChange={(value) => setSalaryRange(value)} value={salaryRange ?? ""}>
+            <SelectTrigger className="max-w-xs">
+              <SelectValue placeholder="Filter by salary" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={null}>All Salaries</SelectItem>
+              <SelectItem value="50k-">Less than 50k</SelectItem>
+              <SelectItem value="50k-100k">50k - 100k</SelectItem>
+              <SelectItem value="100k+">100k+ </SelectItem>
+            </SelectContent>
+          </Select>
+          {/* Add Location Filter */}
+          <Select onValueChange={(value) => setLocationFilter(value)} value={locationFilter ?? ""}>
+            <SelectTrigger className="max-w-xs">
+              <SelectValue placeholder="Filter by location" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={null}>All Locations</SelectItem>
+              <SelectItem value="USA">USA</SelectItem>
+              <SelectItem value="UK">UK</SelectItem>
+              <SelectItem value="Canada">Canada</SelectItem>
+              <SelectItem value="Germany">Germany</SelectItem>
+              <SelectItem value="India">India</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -77,6 +111,10 @@ export default function CandidateJobs() {
               <p className="text-sm text-gray-600">{job.company}</p>
               <p className="text-sm text-gray-600">{job.location}</p>
               <p className="text-sm font-medium mt-2">{job.category}</p>
+              {job.salary_min !== null && job.salary_max !== null && (
+                <p className="text-sm text-gray-600 mt-2">
+                  Salary: ${job.salary_min} - ${job.salary_max}
+                </p>)}
             </CardContent>
             <CardFooter>
               <Button asChild>
