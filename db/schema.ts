@@ -1,20 +1,11 @@
 import { pgEnum, pgTable, serial, text, timestamp, varchar, integer } from 'drizzle-orm/pg-core';
 
 export const categoryEnum = pgEnum('category', [
-  'Software Developer',
-  'QA Engineer',
-  'Data Scientist',
-  'UX Designer',
-  'Frontend Developer',
-  'Backend Developer',
-  'Full Stack Developer',
-  'Devops Engineer',
-  'Junior Developer',
-  'Entry Level Developer',
-  'Junior QA',
-  'QA Manager',
-  'QA Analyst',
-  'QA Tester'
+  'Frontend',
+  'Backend',
+  'FullStack',
+  'Data Analytics',
+  'Human Resource'
 ]);
 
 export const jobs = pgTable('jobs', {
@@ -44,3 +35,4 @@ export type Job = typeof jobs.$inferSelect;
 export type NewJob = typeof jobs.$inferInsert;
 export type Application = typeof applications.$inferSelect;
 export type NewApplication = typeof applications.$inferInsert;
+export type CategoryEnum = typeof categoryEnum.schema

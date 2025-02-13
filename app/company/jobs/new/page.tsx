@@ -15,7 +15,7 @@ export default function PostJob() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    category: "Software Developer",
+    category: categoryEnum.enumValues[0],
     location: "",
     positions: 1,
     company: "",
@@ -26,7 +26,7 @@ export default function PostJob() {
     try {
       await createJob({
         ...formData,
-        category: formData.category as any,
+        category: formData.category,
       })
       toast.success("Job posted successfully")
       router.push("/company/jobs")
@@ -79,19 +79,11 @@ export default function PostJob() {
               <SelectValue placeholder="Select a category" />
             </SelectTrigger>
             <SelectContent>
-            <SelectItem value={categoryEnum.enumValues[0]}>Software Developer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[1]}>QA Engineer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[2]}>Data Scientist</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[6]}>Full Stack Developer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[4]}>Frontend Developer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[5]}>Backend Developer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[3]}>UX Designer</SelectItem>  
-            <SelectItem value={categoryEnum.enumValues[7]}>Devops Engineer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[8]}>Junior Developer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[9]}>Entry Level Developer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[10]}>Junior QA</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[12]}>QA Manager</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[13]}>QA Analyst</SelectItem>
+              {categoryEnum.enumValues.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

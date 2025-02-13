@@ -11,6 +11,7 @@ export default async function CompanyJobs() {
     "use server"
     try {
       await deleteJob(id)
+      toast.success("Job deleted successfully")
     } catch (error) {
       if(error instanceof Error) {
         toast.error(error.message)
@@ -33,8 +34,7 @@ export default async function CompanyJobs() {
             <TableHead>Job Title</TableHead>
             <TableHead>Applications</TableHead>
             <TableHead>Date Posted</TableHead>
-            <TableHead>Edit Actions</TableHead>
-            <TableHead>Delete</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -45,11 +45,6 @@ export default async function CompanyJobs() {
                   <Link href={`/company/jobs/${job.id}/applications`}>View Applications</Link>
                 </Button></TableCell>
               <TableCell>{new Date(job.created_at).toLocaleDateString()}</TableCell>
-              <TableCell>
-                <Button asChild variant="outline" className="mr-2">
-                  <Link href={`/company/jobs/${job.id}/edit`}>Edit</Link>
-                </Button>
-              </TableCell>
               <TableCell>
               <form action={handleDelete.bind(null, job.id)}>
                   <Button variant="destructive" type="submit">Delete</Button>

@@ -1,141 +1,100 @@
-import { db } from './drizzle';
-import { jobs, applications, applicationStatusEnum, categoryEnum } from './schema';
+import { db } from '@/db/drizzle'
+import { jobs, applications } from '@/db/schema'
+import { categoryEnum } from '@/db/schema'
 
-async function seed() {
+const jobSeedData = [
+  {
+    title: 'Frontend Developer',
+    description: 'Looking for a skilled frontend developer to join our team.',
+    company: 'Tech Innovations Inc.',
+    location: 'San Francisco, CA',
+    category: categoryEnum.enumValues[0], // 'Frontend'
+    positions: 2,
+  },
+  {
+    title: 'Backend Engineer',
+    description: 'We are hiring a backend engineer with Node.js experience.',
+    company: 'Global Solutions Ltd.',
+    location: 'New York, NY',
+    category: categoryEnum.enumValues[1], // 'Backend'
+    positions: 3,
+  },
+  {
+    title: 'Full Stack Developer',
+    description: 'Join us as a full stack developer and work on exciting projects.',
+    company: 'Creative Software Corp.',
+    location: 'London, UK',
+    category: categoryEnum.enumValues[2], // 'FullStack'
+    positions: 1,
+  },
+  {
+    title: 'Data Analyst',
+    description: 'Seeking a data analyst to help us make data-driven decisions.',
+    company: 'Analytics Pro',
+    location: 'Chicago, IL',
+    category: categoryEnum.enumValues[3], // 'Data Analytics'
+    positions: 2,
+  },
+  {
+    title: 'HR Manager',
+    description: 'We are looking for an experienced HR manager to lead our HR department.',
+    company: 'People First Co.',
+    location: 'Austin, TX',
+    category: categoryEnum.enumValues[4], // 'Human Resource'
+    positions: 1,
+  },
+]
+
+const applicationSeedData = [
+  {
+    job_id: 1,
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    resume: 'https://example.com/resume/john_doe',
+    cover_letter: 'Enthusiastic frontend developer...',
+  },
+  {
+    job_id: 1,
+    name: 'Jane Smith',
+    email: 'jane.smith@example.com',
+    resume: 'https://example.com/resume/jane_smith',
+    cover_letter: 'Passionate about frontend development...',
+  },
+  {
+    job_id: 2,
+    name: 'Alice Johnson',
+    email: 'alice.johnson@example.com',
+    resume: 'https://example.com/resume/alice_johnson',
+    cover_letter: 'Experienced backend engineer...',
+  },
+]
+
+async function seedDatabase() {
   try {
-    // Insert Jobs
-    const jobsData = [
-      {
-        id: 1,
-        title: "Senior Frontend Developer",
-        description: "We are looking for an experienced Frontend Developer with 5+ years of experience in React and TypeScript. The ideal candidate will have a strong portfolio of web applications and experience with modern frontend tools.",
-        positions: 2,
-        category: categoryEnum.enumValues['4'],  // Use enum value
-        company: "TechCorp Solutions",
-        location: "San Francisco, CA",
-        created_at: new Date("2024-02-01")
-      },
-      {
-        id: 2,
-        title: "DevOps Engineer",
-        description: "Join our infrastructure team to build and maintain our cloud-native platform. Experience with AWS, Kubernetes, and CI/CD pipelines is required.",
-        positions: 1,
-        category: categoryEnum.enumValues['6'],
-        company: "CloudScale Inc",
-        location: "Remote",
-        created_at: new Date("2024-02-05")
-      },
-      {
-        id: 3,
-        title: "UX/UI Designer",
-        description: "Looking for a creative designer to join our product team. You'll be responsible for creating beautiful, intuitive interfaces for our web and mobile applications.",
-        positions: 2,
-        category: categoryEnum.enumValues['9'],
-        company: "DesignHub",
-        location: "New York, NY",
-        created_at: new Date("2024-02-10")
-      },
-      {
-        id: 4,
-        title: "Frontend Developer",
-        description: "Join our fast-growing startup as a Full Stack Developer. Experience with Node.js, React, and PostgreSQL required.",
-        positions: 3,
-        category: categoryEnum.enumValues['3'],
-        company: "StartupX",
-        location: "Austin, TX",
-        created_at: new Date("2024-02-12")
-      },
-      {
-        id: 5,
-        title: "Data Scientist",
-        description: "We're seeking a Data Scientist to help us make sense of our growing data. Experience with Python, ML frameworks, and big data technologies is a must.",
-        positions: 1,
-        category: categoryEnum.enumValues['2'],
-        company: "DataDrive Analytics",
-        location: "Boston, MA",
-        created_at: new Date("2024-02-15")
-      }
-    ];
+    console.log('🌱 Seeding database...')
 
-    await db.insert(jobs).values(jobsData);
+    // Insert jobs
+    for (const job of jobSeedData) {
+      await db.insert(jobs).values(job)
+    }
+    console.log('✅ Jobs seeded successfully.')
 
-    // Insert Applications
-    const applicationsData = [
-      {
-        id: 1,
-        job_id: 1,
-        name: "John Smith",
-        email: "john.smith@email.com",
-        resume: "https://storage.example.com/resumes/john-smith.pdf",
-        cover_letter: "I am excited to apply for the Senior Frontend Developer position...",
-        status: applicationStatusEnum.enumValues['1'],
-        created_at: new Date("2024-02-02")
-      },
-      {
-        id: 2,
-        job_id: 1,
-        name: "Sarah Johnson",
-        email: "sarah.j@email.com",
-        resume: "https://storage.example.com/resumes/sarah-johnson.pdf",
-        cover_letter: "With 6 years of frontend development experience...",
-        status: applicationStatusEnum.enumValues['2'],
-        created_at: new Date("2024-02-03")
-      },
-      {
-        id: 3,
-        job_id: 2,
-        name: "Mike Chen",
-        email: "mike.chen@email.com",
-        resume: "https://storage.example.com/resumes/mike-chen.pdf",
-        cover_letter: "As a DevOps engineer with extensive AWS experience...",
-        status: applicationStatusEnum.enumValues['0'],
-        created_at: new Date("2024-02-06")
-      },
-      {
-        id: 4,
-        job_id: 3,
-        name: "Emily Davis",
-        email: "emily.d@email.com",
-        resume: "https://storage.example.com/resumes/emily-davis.pdf",
-        cover_letter: "I've attached my portfolio showcasing my UX/UI work...",
-        status: applicationStatusEnum.enumValues['3'],
-        created_at: new Date("2024-02-11")
-      },
-      {
-        id: 5,
-        job_id: 3,
-        name: "Alex Wong",
-        email: "alex.w@email.com",
-        resume: "https://storage.example.com/resumes/alex-wong.pdf",
-        cover_letter: "I bring 4 years of experience in product design...",
-        status: applicationStatusEnum.enumValues['0'],
-        created_at: new Date("2024-02-12")
-      },
-      {
-        id: 6,
-        job_id: 4,
-        name: "Lisa Brown",
-        email: "lisa.brown@email.com",
-        resume: "https://storage.example.com/resumes/lisa-brown.pdf",
-        cover_letter: "I'm excited about the opportunity to join StartupX...",
-        status: applicationStatusEnum.enumValues['4'],
-        created_at: new Date("2024-02-13")
-      },
-    ];
+    // Insert applications
+    for (const application of applicationSeedData) {
+      await db.insert(applications).values(application)
+    }
+    console.log('✅ Applications seeded successfully.')
 
-    await db.insert(applications).values(applicationsData);
-
-    console.log("✅ Seed data inserted successfully");
+    console.log('🌱 Database seeding complete.')
   } catch (error) {
-    console.error("Error seeding data:", error);
-    throw error;
+    console.error('❌ Database seeding failed:', error)
   }
 }
 
-// Execute the seed function
-seed()
+// To run the seed function when this file is executed
+seedDatabase()
   .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+  .catch((err) => {
+    console.error(err)
+    process.exit(1)
+  }) 

@@ -89,3 +89,15 @@ export async function getApplicationsForJob(jobId: number) {
     throw new Error('Failed to fetch applications')
   }
 }
+
+
+export async function submitApplication(application: NewApplication) {
+  try {
+    const newApplication = await db.insert(applications).values(application).returning()
+    revalidatePath(`/candidate/jobs`) 
+    return newApplication[0]
+  } catch (error) {
+    console.error('Failed to submit application via API:', error)
+    throw new Error('Failed to submit application')
+  }
+}

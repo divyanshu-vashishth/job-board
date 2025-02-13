@@ -15,6 +15,13 @@
       "when": 1739441174062,
       "tag": "0001_loose_jimmy_woo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1739443549204,
+      "tag": "0002_bored_avengers",
+      "breakpoints": true
     }
   ]
 }

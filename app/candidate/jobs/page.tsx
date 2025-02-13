@@ -1,81 +1,82 @@
-import Link from "next/link"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { getJobs } from "@/lib/actions"
-import { categoryEnum } from "@/db/schema"
-export default async function CandidateJobs() {
-  const jobs = await getJobs()
+"use client"
 
+import { useState, useEffect } from "react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
+import { categoryEnum, type Job } from "@/db/schema"
+
+export default function CandidateJobs() {
+  const [jobs, setJobs] = useState<Job[]>([])
+  const [search, setSearch] = useState("")
+  const [category, setCategory] = useState<string | null>("")
+  const [allJobs, setAllJobs] = useState<Job[]>([]); // Store all jobs
+
+  const fetchJobs = async () => {
+    const response = await fetch('/api/jobs', { cache: 'no-store' });
+  
+    if (!response.ok) {
+      throw new Error('Failed to fetch jobs')
+    } 
+    const results = await response.json()
+    setAllJobs(results.jobs); 
+  }
+
+  useEffect(() => {
+    fetchJobs()
+  }, []) 
+
+  useEffect(() => {
+    
+    const filteredJobs = allJobs.filter(job => {
+      const searchMatch =
+        job.title.toLowerCase().includes(search.toLowerCase()) ||
+        job.company.toLowerCase().includes(search.toLowerCase()) ||
+        job.description.toLowerCase().includes(search.toLowerCase());
+      const categoryMatch = category ? job.category === category : true; 
+      return searchMatch && categoryMatch;
+    });
+    setJobs(filteredJobs);
+  }, [search, category, allJobs]); 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Job Listings</h1>
-      <div className="flex gap-4 mb-6">
-        <Input placeholder="Search jobs..." className="max-w-sm" />
-        <Select>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={categoryEnum.enumValues[0]}>Software Developer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[1]}>Product Manager</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[2]}>Data Scientist</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[3]}>UX Designer</SelectItem>  
-            <SelectItem value={categoryEnum.enumValues[4]}>Frontend Developer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[5]}>Backend Developer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[6]}>Full Stack Developer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[7]}>Senior Developer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[8]}>Junior Developer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[9]}>Entry Level Developer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[10]}>Junior QA</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[11]}>QA Engineer</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[12]}>QA Manager</SelectItem>
-            <SelectItem value={categoryEnum.enumValues[13]}>QA Analyst</SelectItem>
-            {/* <SelectItem value="product">Frontend Developer</SelectItem>
-            <SelectItem value="data-science">Data Science</SelectItem> */}
-          </SelectContent>
-        </Select>
-        <Select>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Location" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="noida">Noida</SelectItem>
-            <SelectItem value="banglore">Banglore</SelectItem>
-            <SelectItem value="pune">Pune</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Salary Range" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="0-50k">$0 - $20k</SelectItem>
-            <SelectItem value="50k-100k">$20k - $50k</SelectItem>
-            <SelectItem value="100k+">$50k+</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="mb-6 space-y-4">
+        <h1 className="text-3xl font-bold">Available Jobs</h1>
+        <div className="flex gap-4">
+          <Input
+            placeholder="Search jobs..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="max-w-sm"
+          />
+          <Select onValueChange={(value) => setCategory(value)} value={category ?? ""}>
+            <SelectTrigger className="max-w-xs">
+              <SelectValue placeholder="Filter by category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={null}>All Categories</SelectItem>
+              {categoryEnum.enumValues.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {jobs.map((job) => (
           <Card key={job.id}>
             <CardHeader>
               <CardTitle>{job.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>
-                <strong>Company:</strong> {job.company}
-              </p>
-              <p>
-                <strong>Location:</strong> {job.location}
-              </p>
-              <p>
-                <strong>Category:</strong> {job.category}
-              </p>
-              <p>
-                <strong>Salary:</strong> {job.positions}
-              </p>
+              <p className="text-sm text-gray-600">{job.company}</p>
+              <p className="text-sm text-gray-600">{job.location}</p>
+              <p className="text-sm font-medium mt-2">{job.category}</p>
             </CardContent>
             <CardFooter>
               <Button asChild>
